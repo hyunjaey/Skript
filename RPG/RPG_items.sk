@@ -1,0 +1,77 @@
+on rightclick:
+  if player's tool is paper named "&f&l[&e&l소모품&f&l] 직업 초기화권":
+    remove 1 of player's tool from player's tool
+    execute op command "/백수 %player%"
+  if player's tool is chest named "&f&l[&c&lBOSS&f&l] 좀비 광부 전리품":
+    cancel event
+    remove 1 of player's tool from player's tool
+    set {_rand.%uuid of player%} to random integer between 1 and 10
+    give 1 nether star named "&f&l[&c&lBOSS&f&l] 좀비 광부의 증표" to player
+    if {_rand.%uuid of player%} is between 1 and 4:
+      give 1 nether star named "&f&l[&c&lBOSS&f&l] 좀비 광부의 증표" to player
+    if {_rand.%uuid of player%} is 1:
+      give 1 nether star named "&f&l[&c&lBOSS&f&l] 좀비 광부의 증표" to player
+  if player's tool is chest named "&f&l[&c&lBOSS&f&l] 오염된 골렘 전리품":
+    cancel event
+    remove 1 of player's tool from player's tool
+    set {_rand.%uuid of player%} to random integer between 1 and 10
+    give 1 nether star named "&f&l[&c&lBOSS&f&l] 오염된 골렘의 증표" to player
+    if {_rand.%uuid of player%} is between 1 and 4:
+      give 1 nether star named "&f&l[&c&lBOSS&f&l] 오염된 골렘의 증표" to player
+    if {_rand.%uuid of player%} is 1:
+      give 1 nether star named "&f&l[&c&lBOSS&f&l] 오염된 골렘의 증표" to player
+
+command /t:
+  trigger:
+    give 1 tipped arrow of night vision to player
+
+command /p:
+  trigger:
+    give 1 dried kelp named "&f&l최하급 회복포션" with lore "&f-우클릭시 체력 5 을 회복시킨다." to player
+    give 1 dried kelp named "&f&l하급 회복포션" with lore "&f-우클릭시 체력 20 을 회복시킨다." to player
+    give 1 dried kelp named "&f&l중급 회복포션" with lore "&f-우클릭시 체력 50 을 회복시킨다." to player
+    give 1 dried kelp named "&f&l고급 회복포션" with lore "&f-우클릭시 체력 130 을 회복시킨다." to player
+    give 1 dried kelp named "&f&l최고급 회복포션" with lore "&f-우클릭시 체력 400 을 회복시킨다." to player
+
+#회복포션
+on rightclick:
+  if player's tool is dried kelp named "&f&l최하급 회복포션":
+    cancel event
+    if player's health is not player's max health:
+      remove 1 of player's tool from player's tool
+      heal player by 5/2 hearts
+    else:
+      send "이미 최대체력입니다!" to player
+  if player's tool is dried kelp named "&f&l하급 회복포션":
+    cancel event
+    if player's health is not player's max health:
+      remove 1 of player's tool from player's tool
+      heal player by 20/2 hearts
+    else:
+      send "이미 최대체력입니다!" to player
+  if player's tool is dried kelp named "&f&l중급 회복포션":
+    cancel event
+    if player's health is not player's max health:
+      remove 1 of player's tool from player's tool
+      heal player by 50/2 hearts
+    else:
+      send "이미 최대체력입니다!" to player
+  if player's tool is dried kelp named "&f&l고급 회복포션":
+    cancel event
+    if player's health is not player's max health:
+      remove 1 of player's tool from player's tool
+      heal player by 130/2 hearts
+    else:
+      send "이미 최대체력입니다!" to player
+  if player's tool is dried kelp named "&f&l최고급 회복포션":
+    cancel event
+    if player's health is not player's max health:
+      remove 1 of player's tool from player's tool
+      heal player by 400/2 hearts
+    else:
+      send "이미 최대체력입니다!" to player
+
+
+command /경험치 [<integer>]:
+  trigger:
+    give 1 written book named "&f경험치 %arg 1%" to player

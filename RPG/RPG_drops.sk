@@ -1,0 +1,110 @@
+variables:
+  {찾는퀘스트::1차::boolean::%player%} = false
+  {유적::3차::boolean::%player%} = false
+  {유적::1차::boolean::%player%} = false
+  {찾는퀘스트::2.1차::boolean::%player%} = false
+  {찾는퀘스트::2.2차::boolean::%player%} = false
+  {찾는퀘스트::2.3차::boolean::%player%} = false
+
+#일반몹
+on death:
+  if victim's name is "&c[Lv.2] &f&l좀비 농부":
+    clear drops
+    set {_drp.%uuid of victim%} to random integer between 1 and 10
+    if {_drp.%uuid of victim%} <= 8:
+      drop 1 wheat named "&f&l[&e&l전리품&f&l] 악취가 나는 벼이삭" at victim
+    drop 1 xp at victim
+    delete {_drp.%uuid of victim%}
+  if victim's name is "&c[Lv.10] &f&l오염된 주민":
+    clear drops
+    set {_drp.%uuid of victim%} to random integer between 1 and 10
+    if {_drp.%uuid of victim%} <= 8:
+      drop 1 rotten flesh named "&f&l[&e&l전리품&f&l] 악취가 나는 살점" at victim
+    drop 3 xp at victim
+    delete {_drp.%uuid of victim%}
+  if victim's name is "&c[Lv.10] &f&l오염된 개":
+    clear drops
+    set {_drp.%uuid of victim%} to random integer between 1 and 10
+    if {_drp.%uuid of victim%} <= 8:
+      drop 1 bone named "&f&l[&e&l전리품&f&l] 살점이 묻어 있는 뼈" at victim
+    drop 3 xp at victim
+    delete {_drp.%uuid of victim%}
+
+#보스
+on death:
+  if victim's name is "&c[Lv.14] &f&l좀비 광부 &c[BOSS]":
+    clear drops
+    drop 3 chest named "&f&l[&c&lBOSS&f&l] 좀비 광부 전리품" with lore "&f-우클릭시 1개 ~ 3개의 보스의 증표를 획득할 수 있다." at victim
+  if victim's name is "&c[Lv.20] &f&l오염된 골렘 &c[BOSS]":
+    clear drops
+    drop 3 chest named "&f&l[&c&lBOSS&f&l] 오염된 골렘 전리품" with lore "&f-우클릭시 1개 ~ 3개의 보스의 증표를 획득할 수 있다." at victim
+#----------------------------------------------------------------
+
+on right click on end portal frame:
+  if player's tool is stick:
+    set {찾는퀘스트::2.3차} to clicked block's location
+    broadcast "D"
+
+on right click on end portal frame:
+  if clicked block's location is {찾는퀘스트::1차}:
+    if {찾는퀘스트::1차::boolean::%player%} is false:
+      give 1 kelp named "&f&l[&e&l퀘스트&f&l] 파상풍 해독제" to the player
+      send "'&f&l[&e&l퀘스트&f&l] 파상풍 해독제'&f를 발견하였습니다." to player
+      set {찾는퀘스트::1차::boolean::%player%} to true
+      stop
+    else:
+      send "이미 한 번 채취하셨습니다!" to player
+  if clicked block's location is {찾는퀘스트::2.1차}:
+    if {찾는퀘스트::2.1차::boolean::%player%} is false:
+      give 1 redstone dust named "&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피" to the player
+      send "'&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피'&f를 발견하였습니다." to player
+      set {찾는퀘스트::2.1차::boolean::%player%} to true
+      stop
+    else:
+      send "이미 한 번 채취하셨습니다!" to player
+  if clicked block's location is {찾는퀘스트::2.2차}:
+    if {찾는퀘스트::2.2차::boolean::%player%} is false:
+      give 1 redstone dust named "&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피" to the player
+      send "'&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피'&f를 발견하였습니다." to player
+      set {찾는퀘스트::2.2차::boolean::%player%} to true
+      stop
+    else:
+      send "이미 한 번 채취하셨습니다!" to player
+  if clicked block's location is {찾는퀘스트::2.3차}:
+    if {찾는퀘스트::2.3차::boolean::%player%} is false:
+      give 1 redstone dust named "&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피" to the player
+      send "'&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피'&f를 발견하였습니다." to player
+      set {찾는퀘스트::2.3차::boolean::%player%} to true
+      stop
+    else:
+      send "이미 한 번 채취하셨습니다!" to player
+
+on right click on end portal frame:
+  if clicked block's location is {유적_2}:
+    give 1 golden axe to the player
+    stop
+
+on right click on end portal frame:
+  if clicked block's location is {유적_3}:
+    if {유적::3차::boolean::%player%} is false:
+      give 10 iron ingot named "&f&l[&e&l화폐&f&l] 실드" to player
+      send "'&f&l[&e&l유적&f&l] 3'&f을 완료하였습니다." to player
+      set {유적::3차::boolean::%player%} to true
+      stop
+    else:
+      send "이미 한 번 발견하셨습니다!" to player
+  if clicked block's location is {유적_1}:
+    if {유적::1차::boolean::%player%} is false:
+      give 20 iron ingot named "&f&l[&e&l화폐&f&l] 실드" to player
+      send "'&f&l[&e&l유적&f&l] 1'&f을 완료하였습니다." to player
+      set {유적::1차::boolean::%player%} to true
+      stop
+    else:
+      send "이미 한 번 발견하셨습니다!" to player
+
+command /퀘스트초기화 [<string>] [<number>] [<player>]:
+  trigger:
+    if arg 1 is "퀘스트":
+      set {찾는퀘스트::%arg 2%차::boolean::%arg 3%} to false
+    if arg 1 is "유적":
+      set {유적::%arg 2%차::boolean::%arg 3%} to false

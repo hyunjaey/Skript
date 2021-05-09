@@ -1,0 +1,39 @@
+variables:
+  {쿨타임::직업무기::2차::암살자.%player%} = 0
+  {쿨타임::직업무기::2차::검사.%player%} = 0
+
+on leftclick:
+  if player's tool is wooden hoe:
+    if player is sneaking:
+      if {쿨타임::직업무기::2차::암살자.%player%} is 0:
+        set {쿨타임::직업무기::2차::암살자.%player%} to 30
+        apply swiftness of tier 3 without particles to the player for 4 seconds
+        loop 80 times:
+          show 1 large explosion with offset of 1, 1, 1 speed 0.01 on the location 1 meter behind the player
+          set {_loca.%player%} to the location 1 meter behind the player
+          set {_me.%player%} to player
+          loop all entities:
+            if the distance between {_loca.%player%} and loop-entity is smaller than 3:
+              if loop-entity is not {_me.%player%}:
+                damage loop-entity by 2 hearts
+              play sound "entity.lightning_bolt.impact" with volume 2 to loop-entity
+          wait 1 tick
+        push player 1 meter above with velocity 1.5
+        wait 10 ticks
+        loop 100 times:
+          if the block 1 meter below the player is not air:
+            loop all entities:
+              if distance between the block 1 meter below player and loop-entity is smaller than 8:
+                if loop-entity is not {_me.%player%}:
+                  damage loop-entity by 6 hearts
+                play sound "entity.lightning_bolt.impact" with volume 2 to loop-entity
+            show 10 large explosion at the player
+            stop loop
+          else:
+            wait 1 ticks
+        loop 30 times:
+          wait 1 second
+          subtract 1 from {쿨타임::직업무기::2차::암살자.%player%}
+        send "&f&l[&c&l직업무기&f&l] 암살자&7&l-쉬프트 좌클릭&f&l의 쿨타임이 완료되었습니다." to player
+      else:
+        send "&f&l[&c&l직업무기&f&l] 암살자&7&l-쉬프트 좌클릭 &f&l| 쿨타임: %{쿨타임::직업무기::2차::암살자.%player%}%초" to player

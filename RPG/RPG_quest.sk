@@ -1,0 +1,337 @@
+variables:
+  {백수::%player%} = true
+  {검사::%player%} = 0
+  {추가될_퀘스트_슬롯::%player%} = 0
+  {파이터::%player%} = 0
+  {파이터_1차_전직퀘스트.%player%} = 0
+  {마법사::%player%} = 0
+  {암살자::%player%} = 0
+  {퀘스트::%player%} = 1
+
+command /퀘스트:
+  trigger:
+    if {퀘스트창.%player%} is not set:
+      set {퀘스트창.%player%} to a new chest inventory with 1 row
+      open {퀘스트창.%player%} to player
+    else:
+      open {퀘스트창.%player%} to player
+
+command /백수 [<player>]:
+  trigger:
+    set {백수::%arg 1%} to true
+    message "%{암살자::%arg 1%}%"
+
+#검사 1차 전직 퀘스트
+on death:
+  if victim is player:
+    set death message to "&c%victim%님이 살해당하셨습니다."
+    if {검사::%player%} is 3:
+      wait 2 ticks
+      send "&e&l[검사 전직 퀘스트]&f&l를 완료 하셨습니다!" to player
+      set {검사::%victim%} to 4
+
+on right click on red wool:
+  if {파이터::%player%} is 3:
+    if {파이터_1차_전직퀘스트.%player%} is smaller than 100:
+      add 1 to {파이터_1차_전직퀘스트.%player%}
+      send "%{파이터_1차_전직퀘스트.%player%}%회 가격하였습니다." to player
+      stop
+  if {파이터_1차_전직퀘스트.%player%} >= 100:
+    send "&e&l[파이터 전직 퀘스트]&f&l를 완료 하셨습니다!" to player
+    set {파이터::%player%} to 4
+
+#마법사 1차 전직 퀘스트
+on right click on end portal frame:
+  if clicked block's location is {찾는퀘스트::마법사전직}:
+    if {마법사::%player%} is 3:
+      set {마법사::%player%} to 4
+      send "결정을 흡수 하셨습니다!" to player
+      send "&e&l[마법사 전직 퀘스트]&f&l를 완료 하셨습니다!" to player
+      play sound "entity.player.level_up" at volume 2 to player
+
+#암살자 1차 전직 퀘스트
+on death:
+  if {암살자::%attacker%} is 3:
+    if victim is zombie:
+      send "&e&l[암살자 전직 퀘스트]&f&l를 완료 하셨습니다!" to attacker
+      set {암살자::%attacker%} to 4
+
+on rightclick on entity:
+#검사 1차 전직
+  if entity's uuid is "18b8dc47-3900-2b6b-bddb-1835d64c684f":
+    if {백수::%player%} is true:
+      if {검사::%player%} is 0:
+        send "검사: 혹시 자네 검사가 되고 싶은건가?" and "검사: 그렇다면 다시 한 번 나한테 말을 걸어 보게" to player
+        set {검사::%player%} to 1
+        stop
+      if {검사::%player%} is 1:
+        send "검사: 남을 죽일 수 있다면 남에게 죽는 공포 또한 경험 해 보아야 한다." and "&e&l[검사 전직 퀘스트]&f&l를 수령하시겠습니까? 수령하시려면 검사에게 다시 말을 걸어 주세요." to player
+        set {검사::%player%} to 2
+        stop
+      if {검사::%player%} is 2:
+        send "검사: 그래 한 번 해보거라" and "&e&l[검사 전직 퀘스트]&f&l를 수령하셨습니다!" to player
+        set {검사::%player%} to 3
+        stop
+      if {검사::%player%} is 4:
+        send "검사: 성공하였구나. 보상을 주도록 하마" to player
+        give wooden sword named "&f&l[&c&l직업무기&f&l] 검사" with lore "&f-1차" and "&f-공격력 5" and "&7&l-우클릭: 다음 평타는 3배의 데미지를 준다 (쿨타임: 10초)" with damage 50 to player
+        set {검사::%player%} to 0
+        set {백수::%player%} to false
+        stop
+  if entity's uuid is "6ff85ae4-24f4-2e14-8b65-11786d8148f7":
+    if {백수::%player%} is true:
+      if {파이터::%player%} is 0:
+        send "파이터: 혹시 자네 파이터가 되고 싶은건가?" and "파이터: 그렇다면 다시 한 번 나한테 말을 걸어 보게" to player
+        set {파이터::%player%} to 1
+        stop
+      if {파이터::%player%} is 1:
+        send "파이터: 파이터는 강인한 수련을 하였기에 강하다. 혹시 수련을 할 정신력이 있는가?" and "&e&l[파이터 전직 퀘스트]&f&l를 수령하시겠습니까? 수령하시려면 파이터에게 다시 말을 걸어 주세요." to player
+        set {파이터::%player%} to 2
+        stop
+      if {파이터::%player%} is 2:
+        send "%player%: 네" to player
+        wait 1 seconds
+        send "파이터: 그래 한 번 해보거라" and "파이터: 저기 있는 빨간 샌드백을 100번 정도 쳐봐. &7(우클릭시 가격수 1회가 증가한다)" and "&e&l[파이터 전직 퀘스트]&f&l를 수령하셨습니다!" to player
+        set {파이터::%player%} to 3
+        stop
+      if {파이터::%player%} is 4:
+        send "파이터: 성공하였구나. 보상을 주도록 하마" to player
+        give wooden pickaxe named "&f&l[&c&l직업무기&f&l] 파이터" with lore "&f-1차" and "&f-공격력 4" and "&f-체력 4" and "&f-방어력 3" and "&7&l-우클릭: 주변 몹들을 하늘로 날려버린다 (쿨타임: 10초)" with damage 50 to player
+        set {파이터::%player%} to 0
+        set {백수::%player%} to false
+        set {파이터_1차_전직퀘스트.%player%} to 0
+  if entity's uuid is "8e34d841-0dcc-203c-867a-620268ecc628":
+    if {백수::%player%} is true:
+      if {마법사::%player%} is 0:
+        send "마법사: 혹시 자네 마법사가 되고 싶은건가?" and "마법사: 그렇다면 다시 한 번 나한테 말을 걸어 보게" to player
+        set {마법사::%player%} to 1
+        stop
+      if {마법사::%player%} is 1:
+        send "마법사: 마법사는 강하면서도 섬세하여야 한다." and "&e&l[마법사 전직 퀘스트]&f&l를 수령하시겠습니까? 수령하시려면 마법사에게 다시 말을 걸어 주세요." to player
+        set {마법사::%player%} to 2
+        stop
+      if {마법사::%player%} is 2:
+        send "마법사: 그것의 증명은 저기 건너편의 산에서 결정을 흡수해 오는 것으로 하겠다." and "&e&l[마법사 전직 퀘스트]&f&l를 수령하셨습니다!" to player
+        set {마법사::%player%} to 3
+        stop
+      if {마법사::%player%} is 4:
+        send "마법사: 성공하였구나. 보상을 주도록 하마" to player
+        set {마법사::%player%} to 0
+        give wooden shovel named "&f&l[&c&l직업무기&f&l] 마법사" with lore "&f-1차" and "&f-공격력 4" and "&7&l-좌클릭: 사거리 7블록의 흰색 광선을 쏘아 닿는 몹에게 딜을 준다 (쿨타임: 1초)" and "&7&l-우클릭: 주변 10블록 내의 몹을 모두 발화시킨다 (쿨타임: 15초)" with damage 50 to player
+        set {백수::%player%} to false
+  if entity's uuid is "55405ae9-82a7-26ad-8d23-01cc91eec5c8":
+    if {백수::%player%} is true:
+      if {암살자::%player%} is 0:
+        send "암살자: 혹시 자네 암살자가 되고 싶은건가?" and "암살자: 그렇다면 다시 한 번 나한테 말을 걸어 보게" to player
+        set {암살자::%player%} to 1
+        stop
+      if {암살자::%player%} is 1:
+        send "암살자: 암살자라면 침착하게 누구든 죽일 수 있어야 한다." and "&e&l[암살자 전직 퀘스트]&f&l를 수령하시겠습니까? 수령하시려면 암살자에게 다시 말을 걸어 주세요." to player
+        set {암살자::%player%} to 2
+        stop
+      if {암살자::%player%} is 2:
+        send "암살자: 사람을 한 명 살해하여 보거라." and "&e&l[암살자 전직 퀘스트]&f&l를 수령하셨습니다!" to player
+        set {암살자::%player%} to 3
+        stop
+      if {암살자::%player%} is 4:
+        send "암살자: 앞으로 많은 사람을 살해하여 보라." to player
+        set {암살자::%player%} to 0
+        set {백수::%player%} to false
+        give wooden hoe named "&f&l[&c&l직업무기&f&l] 암살자" with lore "&f-1차" and "&f-공격력 6" and "&7&l-우클릭: 앞으로 대쉬하며 있던 자리에 바람을 일으켜 바람에 닿는 몹에게 데미지를 준다 (쿨타임: 3초)" with damage 50 to player
+  if entity's uuid is "ead61d58-802f-2a96-8602-6fca924fccf5":
+    give bow named "&f&l[&c&l직업무기&f&l] 궁수" with lore "&f-1차" and "&f-공격력 3" and "&7&l-좌클릭: 화살을 쏜다 (쿨타임: 2초)" and "&7&l-우클릭: 10발의 화살을 연사한다 (쿨타임: 15초)" with damage 300 to player
+  if entity's uuid is "7c02119f-c452-20ca-bdff-25a4a363e83d":
+    if player's level is larger than 30:
+      if player's tool is wooden shovel named "&f&l[&c&l직업무기&f&l] 마법사":
+        if 1st line of lore of player's tool contains "-1차":
+          remove 1 of player's tool from player's tool
+          give wooden shovel named "&f&l[&c&l직업무기&f&l] 마법사" with lore "&f-2차" and "&f-공격력 30" and "&7&l-좌클릭: 사거리 7블록의 흰색 광선을 쏘아 닿는 몹에게 딜을 준다 (쿨타임: 1초)" and "&7&l-우클릭: 주변 10블록 내의 몹을 모두 발화시킨다 (쿨타임: 15초)" and "&7&l-쉬프트좌클릭: 떨어지는 메테오를 흡수하여 전방으로 발사한다 (쿨타임:30초)" with damage 40 to player
+      if player's tool is wooden hoe named "&f&l[&c&l직업무기&f&l] 암살자":
+        if 1st line of lore of player's tool contains "-1차":
+          remove 1 of player's tool from player's tool
+          give wooden hoe named "&f&l[&c&l직업무기&f&l] 암살자" with lore "&f-2차" and "&f-공격력 40" and "&7&l-우클릭: 앞으로 대쉬하며 있던 자리에 바람을 일으켜 바람에 닿는 몹에게 데미지를 준다 (쿨타임: 3초)" and "&7&l-쉬프트좌클릭: 4초간 이동속도가 빨라지며 지나쳐온 적들에게 딜을 준다. 4초가 지나면 도약을 하여 떨어지는 자리에 있는 적들에게 딜을 준다. (쿨타임:30초)" with damage 40 to player
+      if player's tool is wooden sword named "&f&l[&c&l직업무기&f&l] 검사" with lore "&f-1차" and "&f-공격력 5" and "&7&l-우클릭: 다음 평타는 3배의 데미지를 준다 (쿨타임: 10초)" with damage 50:
+        if 1st line of lore of player's tool contains "-1차":
+          remove 1 of player's tool from player's tool
+          give wooden sword named "&f&l[&c&l직업무기&f&l] 검사" with lore "&f-2차" and "&f-공격력 25" and "&f-체력 40" and "&f-방어력 10" and "&7&l-우클릭: 다음 평타는 3배의 데미지를 준다 (쿨타임: 10초)" and "&7&l-쉬프트좌클릭: 충격파를 발사하여 전방 10칸에 있는 몹들을 당겨온다. (쿨타임:30초)" with damage 40 to player
+
+#메인퀘스트-광산의 지배자
+on death:
+  if victim's name is "&c[Lv.14] &f&l좀비 광부 &c[BOSS]":
+    set {_boss.%victim%} to victim's location
+    loop all players:
+      if distance between {_boss.%victim%} and loop-player is smaller than 20:
+        if {퀘스트::%loop-player%} is 3.2:
+          send "'&e&l[메인 퀘스트] 광산의 지배자'&f&l을 성공하셨습니다! 울파에게 다시 말을 걸어주세요!" to loop-player
+          set {퀘스트::%loop-player%} to 3.3
+
+
+command /메인퀘스트 [<number>]:
+  trigger:
+    set {퀘스트::%player%} to arg 1
+
+#메인퀘스트
+
+on rightclick on entity:
+  if entity's uuid is "a6456472-c815-205e-91b9-6267fa69ff6d":
+    send "왈다: 왜 불러?" to player
+    wait 1 second
+    send "%player%: 저 무기가 필요한데.. 무기 하나만 주시만 안될까요?" to player
+    wait 1 seconds
+    send "왈다: 별건 없고 몽둥이 하나 줄게." to player
+    give 1 stick named "&f&l몽둥이" with lore "&f-공격력 3" to player
+  if entity's uuid is "4a53a2a3-76b0-2e9c-9092-26dc1321f524":
+    if {퀘스트::%player%} is 1:
+      set {퀘스트::%player%} to 1.05
+      send "메테론드: 안녕, %player%?" to player
+      wait 1 second
+      send "%player%: 네.. 안녕하세요." to player
+      wait 1 second
+      send "메테론드: 혹시 시간이 된다면 저기 바위 언덕에서 파상풍 치료제 좀 갖다 주겠니?" to player
+      wait 1 second
+      send "메테론드: 너도 알고있다시피 이 곳에 사람들이 이상한 행동을 한다고 하잖니" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 메테론드의 부탁'&f&l을 수령하시겠습니까? 수령하시려면 메테론드에게 다시 말을 걸어 주세요." to player
+      set {퀘스트::%player%} to 1.1
+      stop
+    if {퀘스트::%player%} is 1.1:
+      set {퀘스트::%player%} to 1.15
+      send "%player%: 네 알겠습니다" to player
+      wait 1 second
+      send "메테론드: 그래 고맙다." to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 메테론드의 부탁'&f&l을 수령하셨습니다." to player
+      set {퀘스트::%player%} to 1.2
+      stop
+    if {퀘스트::%player%} is 1.2:
+      if player contains 1 kelp named "&f&l[&e&l퀘스트&f&l] 파상풍 해독제":
+        set {퀘스트::%player%} to 2
+        remove 1 kelp named "&f&l[&e&l퀘스트&f&l] 파상풍 해독제" from player
+        send "메테론드: 고마워! 그 값은 줬어." to player
+        wait 1 second
+        send "메테론드: 그나저나 저기 스리온이 너한테 할 말이 있나본데?" to player
+        wait 1 second
+        send "'&e&l[메인 퀘스트] 메테론드의 부탁'&f&l을 완료하셨습니다!" to player
+        stop
+      else:
+        send "메테론드: 저기 언덕 위에 있다고 하던데.." to player
+        stop
+    else:
+      send "메테론드: 이제 조금 괜찮아지려나.." to player
+      stop
+  if entity's uuid is "79fbfcff-dd35-2354-badf-a795b15e6ed8":
+    if {퀘스트::%player%} is 2:
+      set {퀘스트::%player%} to 2.05
+      send "스리온: 누구니?" to player
+      wait 1 second
+      send "%player%: 전 %player%입니다. 저를 찾으셨다고..?" to player
+      wait 1 second
+      send "스리온: 아 그래! 지금 저기 좀비 주민들이 내 밭을 계속 밟아서 일을 못하겠어.." to player
+      wait 1 second
+      send "스리온: 난 너무 어려서 못 잡겠어.. 혹시 너가 대신 잡아서 그 벼이삭들을 빼앗아 줄 수 있을까? 대신 보상은 줄게" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 좀비 주민의 피해'&f&l을 수령하시겠습니까? 수령하시려면 스리온에게 다시 말을 걸어 주세요." to player
+      set {퀘스트::%player%} to 2.1
+      stop
+    if {퀘스트::%player%} is 2.1:
+      set {퀘스트::%player%} to 2.15
+      send "%player%: 그러죠" to player
+      wait 1 second
+      send "스리온: 그래 고마워. 한 20개만 줄래?" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 좀비 주민의 피해'&f&l을 수령하셨습니다." to player
+      set {퀘스트::%player%} to 2.2
+      stop
+    if {퀘스트::%player%} is 2.2:
+      if player has 20 wheat named "&f&l[&e&l전리품&f&l] 악취가 나는 벼이삭":
+        remove 20 wheat named "&f&l[&e&l전리품&f&l] 악취가 나는 벼이삭" from player
+        set {퀘스트::%player%} to 3
+        send "스리온: 고마워. 이거 먹고 힘내!" to player
+        wait 1 second
+        send "스리온: 그 정도로 강하다면 저쪽 광산에 가보지 않을래? 거기도 피해가 꽤 있다고 하던데.." to player
+        wait 1 second
+        send "'&e&l[메인 퀘스트] 좀비 주민의 피해'&f&l을 완료하셨습니다!" to player
+        give 5 dried kelp named "&f&l최하급 회복포션" with lore "&f-우클릭시 체력 5 을 회복시킨다." to player
+        stop
+      else:
+        send "스리온: 서둘러 줄 수 있을까..?" to player
+        stop
+    else:
+      send "스리온: 뭐야 저 좀비 주민들은..." to player
+  if entity's uuid is "3437aa94-cefd-2029-8fed-e94e72c1c4fc":
+    if {퀘스트::%player%} is 3:
+      set {퀘스트::%player%} to 3.05
+      send "울파: 헉헉 힘들어... 겨우 도망쳤네" to player
+      wait 1 second
+      send "울파: 넌 뭐야?" to player
+      wait 1 seconds
+      send "%player%: 광산이 피해가 크다는 이야기를 들어서 도와드리려고요.."
+      wait 1 second
+      send "울파: 그래? 그럼 저기 밑에 있는 좀비 광부 좀 처리해줄래?" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 광산의 지배자'&f&l을 수령하시겠습니까? 수령하시려면 울파에게 다시 말을 걸어 주세요." to player
+      set {퀘스트::%player%} to 3.1
+      stop
+    if {퀘스트::%player%} is 3.1:
+      set {퀘스트::%player%} to 3.15
+      send "%player%: 힘들겠지만 해볼게요!" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 광산의 지배자'&f&l을 수령하셨습니다." and "&7(이번 퀘스트는 보스 퀘스트입니다! 파티를 꾸려 레이드를 하는 것을 추천드립니다.)" to player
+      set {퀘스트::%player%} to 3.2
+      stop
+    if {퀘스트::%player%} is 3.3:
+      set {퀘스트::%player%} to 4
+      send "울파: 고맙다. 뭐 줄건 없고, 너의 전투경험이 쌓인 걸로 만족할거지?" to player
+      wait 1 second
+      send "울파: 그나저나 여기도 역병?이 돌지만 옆동네는 아주 난리 났다던데? 거기 가보는건 어때?" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 광산의 지배자'&f&l을 완료하셨습니다!" to player
+      give 15 xp to player
+      stop
+    if {퀘스트::%player%} is 3.2:
+      send "울파: 서둘러 줄 수 있을까..?" to player
+      stop
+    else:
+      send "울파: 나도 일 해야 하는데..." to player
+  if entity's uuid is "3aa050e0-9e15-2403-aef6-f8da248ca630":
+    if {퀘스트::%player%} is 4:
+      set {퀘스트::%player%} to 4.05
+      send "월더: 흐음... 뭐가 문제지?" to player
+      wait 1 second
+      send "월더: 음 넌 어디가 아프니?" to player
+      wait 1 seconds
+      send "%player%: 아 아픈게 아니라 이쪽 마을을 도와주러 왔어요" to player
+      wait 1 second
+      send "월더: 그러니? 그럼 지금 상황은 잘 알지? 우리 마을이 저쪽보다 피해가 커" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 으스스한 마을'&f&l을 수령하시겠습니까? 수령하시려면 월더에게 다시 말을 걸어 주세요." to player
+      set {퀘스트::%player%} to 4.1
+      stop
+    if {퀘스트::%player%} is 4.1:
+      set {퀘스트::%player%} to 4.15
+      send "%player%: 네 알고 있어요." to player
+      wait 1 second
+      send "월더: 그럼 우선 집집마다 돌아다니면서 피를 좀 채취해줘. 모든 집들을 가봐야 해!" to player
+      wait 1 second
+      send "'&e&l[메인 퀘스트] 으스스한 마을'&f&l을 수령하셨습니다." to player
+      set {퀘스트::%player%} to 4.2
+      stop
+    if {퀘스트::%player%} is 4.2:
+      if player has 3 redstone dust named "&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피":
+        set {퀘스트::%player%} to 5
+        remove 3 redstone dust named "&f&l[&e&l퀘스트&f&l] 바닥에 묻은 피" from player
+        send "월더: 음 이제 이걸로 연구를 해봐야겠네" to player
+        wait 1 second
+        send "월더: 아 그리고, 저기 브루노스도 좀 도와줘. 지금 쟤도 연구에 차질이 생기고 있어." to player
+        wait 1 second
+        send "'&e&l[메인 퀘스트] 으스스한 마을'&f&l을 완료하셨습니다!" to player
+        give 10 xp to player
+        set {퀘스트::%player%} to 4.3
+        stop
+      else:
+        send "월더: 어서 주워와! 집집마다 있을거야" to player
+    else:
+      send "월더: 흐음.. 왜 이런거지?" to player
+      stop
+  if uuid of entity is "2e279eff-992b-2b7e-ba5d-4c49bf401922":
+    if {퀘스트::%player%} is 4.3

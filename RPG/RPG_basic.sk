@@ -1,0 +1,332 @@
+variables:
+  {tool::%player%::power} = 0
+  {helmet::%player%::power} = 0
+  {chestplate::%player%::power} = 0
+  {leggings::%player%::power} = 0
+  {boots::%player%::power} = 0
+  {tool::%player%::health} = 0
+  {helmet::%player%::health} = 0
+  {chestplate::%player%::health} = 0
+  {leggings::%player%::health} = 0
+  {boots::%player%::health} = 0
+  {tool::%player%::defense} = 0
+  {helmet::%player%::defense} = 0
+  {chestplate::%player%::defense} = 0
+  {leggings::%player%::defense} = 0
+  {boots::%player%::defense} = 0
+  {힘스텟.%player%} = 0
+  {민첩스텟.%player%} = 0
+  {모험스텟.%player%} = 0
+  {잔여스텟.%player%} = 0
+  {집중스텟.%player%} = 0
+  {백수.%player%} = false
+
+on level up:
+  add 3 to {잔여스텟.%player%}
+
+command /스텟정하기 [<string>] [<integer>]:
+  trigger:
+    if player is op:
+      set {%arg 1%스텟.%player%} to arg 2
+
+on chat:
+  if text is "d":
+    loop 167 times:
+      wait 9 ticks
+      add 1 to player's level
+
+every 10 ticks:
+  loop all players:
+    set the loop-player's walk speed to {민첩스텟.%loop-player%}/1000 + 0.21
+    if loop-player's tool is not air:
+      set {_lore::*} to uncolored lore of loop-player's tool
+      loop {_lore::*}:
+        if {_lore::%loop-index%} contains "-공격력":
+          set {_power} to "%{_lore::%loop-index%}%"
+          replace all " " and "-공격력" with "" in {_power}
+          set {tool::%loop-player%::power} to {_power} parsed as number
+        if {_lore::%loop-index%} contains "-체력":
+          set {_health} to "%{_lore::%loop-index%}%"
+          replace all " " and "-체력" with "" in {_health}
+          set {tool::%loop-player%::health} to {_health} parsed as number
+        if {_lore::%loop-index%} contains "-방어력":
+          set {_defense} to "%{_lore::%loop-index%}%"
+          replace all " " and "-방어력" with "" in {_defense}
+          set {tool::%loop-player%::defense} to {_defense} parsed as number
+    if loop-player's helmet is not air:
+      set {_lore::*} to uncolored lore of loop-player's helmet
+      loop {_lore::*}:
+        if {_lore::%loop-index%} contains "공격력":
+          set {_power} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "공격력" with "" in {_power}
+          set {helmet::%loop-player%::power} to {_power} parsed as number
+        if {_lore::%loop-index%} contains "체력":
+          set {_health} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "체력" with "" in {_health}
+          set {helmet::%loop-player%::health} to {_health} parsed as number
+        if {_lore::%loop-index%} contains "방어력":
+          set {_defense} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "방어력" with "" in {_defense}
+          set {helmet::%loop-player%::defense} to {_defense} parsed as number
+    if loop-player's chestplate is not air:
+      set {_lore::*} to uncolored lore of loop-player's chestplate
+      loop {_lore::*}:
+        if {_lore::%loop-index%} contains "공격력":
+          set {_power} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "공격력" with "" in {_power}
+          set {chestplate::%loop-player%::power} to {_power} parsed as number
+        if {_lore::%loop-index%} contains "체력":
+          set {_health} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "체력" with "" in {_health}
+          set {chestplate::%loop-player%::health} to {_health} parsed as number
+        if {_lore::%loop-index%} contains "방어력":
+          set {_defense} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "방어력" with "" in {_defense}
+          set {chestplate::%loop-player%::defense} to {_defense} parsed as number
+    if loop-player's leggings is not air:
+      set {_lore::*} to uncolored lore of loop-player's leggings
+      loop {_lore::*}:
+        if {_lore::%loop-index%} contains "-공격력":
+          set {_power} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "-공격력" with "" in {_power}
+          set {leggings::%loop-player%::power} to {_power} parsed as number
+        if {_lore::%loop-index%} contains "-체력":
+          set {_health} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "-체력" with "" in {_health}
+          set {leggings::%loop-player%::health} to {_health} parsed as number
+        if {_lore::%loop-index%} contains "-방어력":
+          set {_defense} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "-방어력" with "" in {_defense}
+          set {leggings::%loop-player%::defense} to {_defense} parsed as number
+    if loop-player's boots is not air:
+      set {_lore::*} to uncolored lore of loop-player's boots
+      loop {_lore::*}:
+        if {_lore::%loop-index%} contains "공격력":
+          set {_power} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "공격력" with "" in {_power}
+          set {boots::%loop-player%::power} to {_power} parsed as number
+        if {_lore::%loop-index%} contains "체력":
+          set {_health} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "체력" with "" in {_health}
+          set {boots::%loop-player%::health} to {_health} parsed as number
+        if {_lore::%loop-index%} contains "방어력":
+          set {_defense} to "%{_lore::%loop-index%}%"
+          replace all " " and "-" and "방어력" with "" in {_defense}
+          set {boots::%loop-player%::defense} to {_defense} parsed as number
+
+every 10 ticks:
+  loop all players:
+    set {power.%loop-player%} to ({tool::%loop-player%::power}+{helmet::%loop-player%::power}+{chestplate::%loop-player%::power}+{leggings::%loop-player%::power}+{boots::%loop-player%::power})
+    set {health.%loop-player%} to {tool::%loop-player%::health}+{helmet::%loop-player%::health}+{chestplate::%loop-player%::health}+{leggings::%loop-player%::health}+{boots::%loop-player%::health}
+    set {defense.%loop-player%} to {tool::%loop-player%::defense}+{helmet::%loop-player%::defense}+{chestplate::%loop-player%::defense}+{leggings::%loop-player%::defense}+{boots::%loop-player%::defense}
+    set loop-player's max health to ({health.%loop-player%}/4) + 10
+#집중스텟과 힘스텟 변경시 수정하기
+on damage:
+  if {power.%attacker%} is set:
+    add {power.%attacker%}/2 to damage
+  if {defense.%victim%} is set:
+    subtract {defense.%victim%}/5 from damage
+
+command /힐:
+  trigger:
+    set player's health to player's max health
+
+command /spawn:
+  trigger:
+    teleport player to {spawn}
+
+every 1 minutes:
+  loop all players:
+    apply saturation of tier 40 without particles to loop-player for 60 seconds
+
+command /쓰레기통:
+  trigger:
+    set {쓰레기통} to a new chest inventory with 6 rows with name "쓰레기통"
+    open {쓰레기통} to player
+
+command /스텟:
+  trigger:
+    set {스텟창.%player%} to a new chest inventory with 6 rows with name "%player%의 스텟창"
+    set slot 11 of {스텟창.%player%} to red dye named "&f&l힘 스텟" with lore "&d&l-힘 스텟: %{힘스텟.%player%}%" and "&f&l-추가 공격력: %{힘스텟.%player%}/3%" and "&f&l-추가 체력: %{힘스텟.%player%}/3%"
+    set slot 15 of {스텟창.%player%} to green dye named "&f&l민첩 스텟" with lore "&b&l-민첩 스텟: %{민첩스텟.%player%}%" and "&f&l-추가 회피 확률: %{민첩스텟.%player%}/10%%%" and "&f&l-추가 이동속도: %{민첩스텟.%player%}/1000%"
+    set slot 38 of {스텟창.%player%} to yellow dye named "&f&l집중 스텟" with lore "&b&l-집중 스텟: %{집중스텟.%player%}%" and "&f&l-추가 치명타 확률: %{집중스텟.%player%}/5%%%" and "&f&l-추가 공격력: %{집중스텟.%player%}/8%"
+    set slot 42 of {스텟창.%player%} to blue dye named "&f&l모험 스텟" with lore "&3&l-모험 스텟: %{모험스텟.%player%}%" and "&f&l-추가 체력: %{모험스텟.%player%}*2%"
+    set slot 4 of {스텟창.%player%} to gray dye named "&f&l잔여 스텟" with lore "&7&l-잔여 스텟: %{잔여스텟.%player%}%"
+    open {스텟창.%player%} to player
+every 10 ticks:
+  loop all players:
+    if {모험스텟.%loop-player%} is set:
+      set loop-player's max health to loop-player's max health + {모험스텟.%loop-player%} * 2
+    if {힘스텟.%loop-player%} is set:
+      set loop-player's max health to loop-player's max health + {힘스텟.%loop-player%} / 3
+
+on damage:
+  if {힘스텟.%attacker%} is set:
+    add {힘스텟.%attacker%} / 3 to damage
+  add {집중스텟.%attacker%} / 8 to damage
+  if {집중스텟.%attacker%} is set:
+    set {_crit.%attacker%} to random integer between 1 and 1000
+    if {_crit.%attacker%} is smaller than {집중스텟.%attacker%} * 2:
+      set damage to damage * 2
+      send "&e&l**크리티컬!**" to attacker
+      play sound "block.note_block.flute" to attacker
+  if damage cause is not burning:
+    set {_evade.%victim%} to random integer between 1 and 1000
+    if {_evade.%victim%} is smaller than {민첩스텟.%victim%} + 1:
+      cancel event
+      send "&d&l**회피!**" to victim
+    else:
+      send "&f&l회피 실패" to victim
+
+command /flyspeed [<integer>]:
+  trigger:
+    set player's flyspeed to arg 1 / 100 + 0.2
+
+command /coin:
+  trigger:
+    give 1 diamond named "&f&l[&e&l화폐&f&l] 이아" to player
+
+command /스텟초기화 [<string>]:
+  trigger:
+    if arg 1 is "all":
+      set {힘스텟.%player%} to 0
+      set {민첩스텟.%player%} to 0
+      set {모험스텟.%player%} to 0
+      set {집중스텟.%player%} to 0
+      set {잔여스텟.%player%} to 0
+    else:
+      set {%arg 1%스텟.%player%} to 0
+
+on inventory click:
+  if iname is "%player%의 스텟창":
+    cancel event
+    if {잔여스텟.%player%} is larger than 0:
+      if event-slot is 1 or 2 or 3 or 10 or 11 or 12 or 19 or 20 or 21:
+        subtract 1 from {잔여스텟.%player%}
+        add 1 to {힘스텟.%player%}
+        set slot 11 of {스텟창.%player%} to red dye named "&f&l힘 스텟" with lore "&d&l-힘 스텟: %{힘스텟.%player%}%" and "&f&l-추가 공격력: %{힘스텟.%player%}/3%" and "&f&l-추가 체력: %{힘스텟.%player%}/3%"
+        set slot 15 of {스텟창.%player%} to green dye named "&f&l민첩 스텟" with lore "&b&l-민첩 스텟: %{민첩스텟.%player%}%" and "&f&l-추가 회피 확률: %{민첩스텟.%player%}/10%%%" and "&f&l-추가 이동속도: %{민첩스텟.%player%}/1000%"
+        set slot 38 of {스텟창.%player%} to yellow dye named "&f&l집중 스텟" with lore "&b&l-집중 스텟: %{집중스텟.%player%}%" and "&f&l-추가 치명타 확률: %{집중스텟.%player%}/5%%%" and "&f&l-추가 공격력: %{집중스텟.%player%}/8%"
+        set slot 42 of {스텟창.%player%} to blue dye named "&f&l모험 스텟" with lore "&3&l-모험 스텟: %{모험스텟.%player%}%" and "&f&l-추가 체력: %{모험스텟.%player%}*1.5%" and "&f&l-추가 고정 피해감소: %{모험스텟.%player%}/5%"
+        set slot 4 of {스텟창.%player%} to gray dye named "&f&l잔여 스텟" with lore "&7&l-잔여 스텟: %{잔여스텟.%player%}%"
+      if event-slot is 5 or 6 or 7 or 14 or 15 or 16 or 23 or 24 or 25:
+        subtract 1 from {잔여스텟.%player%}
+        add 1 to {민첩스텟.%player%}
+        set slot 11 of {스텟창.%player%} to red dye named "&f&l힘 스텟" with lore "&d&l-힘 스텟: %{힘스텟.%player%}%" and "&f&l-추가 공격력: %{힘스텟.%player%}/3%" and "&f&l-추가 체력: %{힘스텟.%player%}/3%"
+        set slot 15 of {스텟창.%player%} to green dye named "&f&l민첩 스텟" with lore "&b&l-민첩 스텟: %{민첩스텟.%player%}%" and "&f&l-추가 회피 확률: %{민첩스텟.%player%}/10%%%" and "&f&l-추가 이동속도: %{민첩스텟.%player%}/1000%"
+        set slot 38 of {스텟창.%player%} to yellow dye named "&f&l집중 스텟" with lore "&b&l-집중 스텟: %{집중스텟.%player%}%" and "&f&l-추가 치명타 확률: %{집중스텟.%player%}/5%%%" and "&f&l-추가 공격력: %{집중스텟.%player%}/8%"
+        set slot 42 of {스텟창.%player%} to blue dye named "&f&l모험 스텟" with lore "&3&l-모험 스텟: %{모험스텟.%player%}%" and "&f&l-추가 체력: %{모험스텟.%player%}*1.5%" and "&f&l-추가 고정 피해감소: %{모험스텟.%player%}/5%"
+        set slot 4 of {스텟창.%player%} to gray dye named "&f&l잔여 스텟" with lore "&7&l-잔여 스텟: %{잔여스텟.%player%}%"
+      if event-slot is 28 or 29 or 30 or 37 or 38 or 39 or 46 or 47 or 48:
+        subtract 1 from {잔여스텟.%player%}
+        add 1 to {집중스텟.%player%}
+        set slot 11 of {스텟창.%player%} to red dye named "&f&l힘 스텟" with lore "&d&l-힘 스텟: %{힘스텟.%player%}%" and "&f&l-추가 공격력: %{힘스텟.%player%}/3%" and "&f&l-추가 체력: %{힘스텟.%player%}/3%"
+        set slot 15 of {스텟창.%player%} to green dye named "&f&l민첩 스텟" with lore "&b&l-민첩 스텟: %{민첩스텟.%player%}%" and "&f&l-추가 회피 확률: %{민첩스텟.%player%}/10%%%" and "&f&l-추가 이동속도: %{민첩스텟.%player%}/1000%"
+        set slot 38 of {스텟창.%player%} to yellow dye named "&f&l집중 스텟" with lore "&b&l-집중 스텟: %{집중스텟.%player%}%" and "&f&l-추가 치명타 확률: %{집중스텟.%player%}/5%%%" and "&f&l-추가 공격력: %{집중스텟.%player%}/8%"
+        set slot 42 of {스텟창.%player%} to blue dye named "&f&l모험 스텟" with lore "&3&l-모험 스텟: %{모험스텟.%player%}%" and "&f&l-추가 체력: %{모험스텟.%player%}*1.5%" and "&f&l-추가 고정 피해감소: %{모험스텟.%player%}/5%"
+        set slot 4 of {스텟창.%player%} to gray dye named "&f&l잔여 스텟" with lore "&7&l-잔여 스텟: %{잔여스텟.%player%}%"
+      if event-slot is 32 or 33 or 34 or 41 or 42 or 43 or 50 or 51 or 52:
+        subtract 1 from {잔여스텟.%player%}
+        add 1 to {모험스텟.%player%}
+        set slot 11 of {스텟창.%player%} to red dye named "&f&l힘 스텟" with lore "&d&l-힘 스텟: %{힘스텟.%player%}%" and "&f&l-추가 공격력: %{힘스텟.%player%}/3%" and "&f&l-추가 체력: %{힘스텟.%player%}/3%"
+        set slot 15 of {스텟창.%player%} to green dye named "&f&l민첩 스텟" with lore "&b&l-민첩 스텟: %{민첩스텟.%player%}%" and "&f&l-추가 회피 확률: %{민첩스텟.%player%}/10%%%" and "&f&l-추가 이동속도: %{민첩스텟.%player%}/1000%"
+        set slot 38 of {스텟창.%player%} to yellow dye named "&f&l집중 스텟" with lore "&b&l-집중 스텟: %{집중스텟.%player%}%" and "&f&l-추가 치명타 확률: %{집중스텟.%player%}/5%%%" and "&f&l-추가 공격력: %{집중스텟.%player%}/8%"
+        set slot 42 of {스텟창.%player%} to blue dye named "&f&l모험 스텟" with lore "&3&l-모험 스텟: %{모험스텟.%player%}%" and "&f&l-추가 체력: %{모험스텟.%player%}*1.5%" and "&f&l-추가 고정 피해감소: %{모험스텟.%player%}/5%"
+        set slot 4 of {스텟창.%player%} to gray dye named "&f&l잔여 스텟" with lore "&7&l-잔여 스텟: %{잔여스텟.%player%}%"
+    else:
+      send "&l잔여스텟이 부족합니다!" to player
+every 10 ticks:
+  loop all players:
+    send action bar "&e&l현재 체력: &3&l%loop-player's health * 2% / %loop-player's max health * 2%" to loop-player
+
+command /튜토리얼:
+  trigger:
+    teleport player to {튜토리얼}
+
+on right click on purple stained glass:
+  teleport player to {전직소}
+
+on right click on emerald block:
+  if player is sneaking:
+    if {워프창::%player%} is not set:
+      set {워프창::%player%} to a new chest inventory with 6 rows with name "&c%player%&f의 워프창"
+      set {_warp.slot.num} to -1
+      loop 11 times:
+        add 1 to {_warp.slot.num}
+        set slot {_warp.slot.num} of {워프창::%player%} to dead brain coral block named "&f&l[&3&l워프&f&l] &7&o???"
+    else:
+      if clicked block's location is {워프::1}:
+        if slot 0 of {워프창::%player%} is dead brain coral block:
+          set slot 0 of {워프창::%player%} to dead tube coral block named "&f&l[&3&l워프&f&l] 태초마을"
+          send "&f&l|&f&l[&3&l워프&f&l] 태초마을&f&l|을 점령하셨습니다!" to player
+      if clicked block's location is {워프::2}:
+        if slot 1 of {워프창::%player%} is dead brain coral block:
+          set slot 1 of {워프창::%player%} to dead tube coral block named "&f&l[&3&l워프&f&l] 구론마을"
+          send "&f&l|&f&l[&3&l워프&f&l] 구론마을&f&l|을 점령하셨습니다!" to player
+      if clicked block's location is {워프::3}:
+        if slot 2 of {워프창::%player%} is dead brain coral block:
+          set slot 2 of {워프창::%player%} to dead tube coral block named "&f&l[&3&l워프&f&l] 오염된 마을"
+          send "&f&l|&f&l[&3&l워프&f&l] 오염된 마을&f&l|을 점령하셨습니다!" to player
+      if clicked block's location is {워프::4}:
+        if slot 3 of {워프창::%player%} is dead brain coral block:
+          set slot 3 of {워프창::%player%} to dead tube coral block named "&f&l[&3&l워프&f&l] 원주민들의 길"
+          send "&f&l|&f&l[&3&l워프&f&l] 원주민들의 길&f&l|을 점령하셨습니다!" to player
+      open {워프창::%player%} to player
+
+on inventory click:
+  if iname is "&c%player%&f의 워프창":
+    cancel event
+    if event-itemtype is dead tube coral block named "&f&l[&3&l워프&f&l] 태초마을":
+      close player's inventory
+      send "이동합니다.." to player
+      wait 1 second
+      strike lightning effect at the player
+      play sound "entity.lightning_bolt.impact" to player
+      wait 10 ticks
+      show 200 cloud with offset of 0.3, 0.3, 0.3 at player
+      wait 5 ticks
+      teleport player to location(-2191.5, 104, 659.5, world "world")
+    if event-itemtype is dead tube coral block named "&f&l[&3&l워프&f&l] 구론마을":
+      close player's inventory
+      send "이동합니다.." to player
+      wait 1 second
+      strike lightning effect at the player
+      play sound "entity.lightning_bolt.impact" to player
+      wait 10 ticks
+      show 200 cloud with offset of 0.3, 0.3, 0.3 at player
+      wait 5 ticks
+      teleport player to location(-1949.5, 103, 639.5, world "world")
+    if event-itemtype is dead tube coral block named "&f&l[&3&l워프&f&l] 오염된 마을":
+      close player's inventory
+      send "이동합니다.." to player
+      wait 1 second
+      strike lightning effect at the player
+      play sound "entity.lightning_bolt.impact" to player
+      wait 10 ticks
+      show 200 cloud with offset of 0.3, 0.3, 0.3 at player
+      wait 5 ticks
+      teleport player to location(-1837.5, 107, 405.5, world "world")
+    if event-itemtype is dead tube coral block named "&f&l[&3&l워프&f&l] 원주민들의 길":
+      close player's inventory
+      send "이동합니다.." to player
+      wait 1 second
+      strike lightning effect at the player
+      play sound "entity.lightning_bolt.impact" to player
+      wait 10 ticks
+      show 200 cloud with offset of 0.3, 0.3, 0.3 at player
+      wait 5 ticks
+      teleport player to location(-1708.5, 103, 338.5, world "world")
+
+
+command /워프초기화:
+  trigger:
+    delete {워프창::%player%}
+
+command /워프설정 [<integer>]:
+  trigger:
+    set {워프설정기::%player%} to true
+    set {지정된워프숫자::%player%} to arg 1
+
+on right click on emerald block:
+  if {워프설정기::%player%} is true:
+    set {워프::%{지정된워프숫자::%player%}%} to clicked block's location

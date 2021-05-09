@@ -1,0 +1,225 @@
+variables:
+  {쿨타임::직업무기::1차::마법사.%player%} = 0
+  {쿨타임::직업무기::0차::마법사.%player%} = 0
+  {쿨타임::직업무기::1차::암살자.%player%} = 0
+  {쿨타임::직업무기::1차::검사.%player%} = 0
+  {쿨타임::직업무기::1차::궁수.%player%} = 0
+  {쿨타임::직업무기::1차::파이터.%player%} = 0
+  {쿨타임::직업무기::2차::마법사.%player%} = 0
+  {쿨타임::직업무기::0차::궁수.%player%} = 0
+
+on right click:
+  if player's tool is wooden shovel:
+    cancel event
+    if {쿨타임::직업무기::1차::마법사.%player%} is 0:
+      set {쿨타임::직업무기::1차::마법사.%player%} to 15
+      set {_exception.%player%} to player
+      wait 5 ticks
+      set {_loc.%player%} to player's location
+      loop all entities:
+        if distance between {_loc.%player%} and loop-entity <= 10:
+          if loop-entity is not {_exception.%player%}:
+            ignite loop-entity for 10 seconds
+          play sound "item.flintandsteel.use" with volume 10 with pitch 3 to loop-entity
+          show 10 lava with speed 0.003 at loop-entity
+      wait 3 seconds
+      loop 15 times:
+        wait 1 second
+        subtract 1 from {쿨타임::직업무기::1차::마법사.%player%}
+      send "&f&l[&c&l직업무기&f&l] 마법사&7&l-우클릭&f&l의 쿨타임이 완료되었습니다" to player
+      stop
+    else:
+      send "&f&l[&c&l직업무기&f&l] 마법사&7&l-우클릭 &f&l| 쿨타임: %{쿨타임::직업무기::1차::마법사.%player%}%초" to player
+  if player's tool is golden hoe:
+    cancel event
+    loop 5 times:
+      push player 1 meters horizontal backwards at speed 1
+      push player 0.1 meters upwards at speed 0.6
+      show 10 large explosion on the location 1 meter above player
+      set {_loc.%player%} to player's location
+      loop all entities:
+        if distance between loop-entity and {_loc.%player%} is smaller than 10:
+          set {_pl.%player%} to loop-entity
+          play sound "entity.lightning_bolt.impact" with volume 3 to {_pl.%player%}
+      wait 2 ticks
+    wait 2 seconds
+    loop 15 times:
+      push player 1 meters horizontal forward at speed 4
+      push player 1 meters downwards at speed 1
+      show 10 large explosion on the location 1 meter above player
+      set {_loc.%player%} to player's location
+      set {_me.%player%} to player
+      loop all entities:
+        if distance between loop-entity and {_loc.%player%} is smaller than 10:
+          set {_pl.%player%} to loop-entity
+          if loop-entity is not {_me.%player%}:
+            damage loop-entity by 10 hearts
+          play sound "entity.lightning_bolt.impact" with volume 3 to {_pl.%player%}
+      wait 1 tick
+    stop
+  if player's tool is wooden hoe:
+    cancel event
+    if {쿨타임::직업무기::1차::암살자.%player%} is 0:
+      set {쿨타임::직업무기::1차::암살자.%player%} to 5
+      set {_loca.%player%} to 0
+      set {_me.%player%} to player
+      loop 5 times:
+        push player 1 meters horizontal forwards at speed 1
+        loop 10 times:
+          add 1 to {_loca.%player%}
+          show 10 explosion with speed 0.005 on the location {_loca.%player%} meters left player
+          show 10 explosion with speed 0.005 on the location {_loca.%player%} meters right player
+          set {_loca.%player%::L} to the location {_loca.%player%} meters left player
+          set {_loca.%player%::R} to the location {_loca.%player%} meters right player
+          loop all entities:
+            if the distance between {_loca.%player%::L} and loop-entity is smaller than 3:
+              play sound "entity.llama.spit" with volume 2 to loop-entity
+              if loop-entity is not {_me.%player%}:
+                damage loop-entity by {power.%player%}/2+{힘스텟.%player%}/6+{집중스텟.%player%}/16 hearts
+            if the distance between {_loca.%player%::R} and loop-entity is smaller than 3:
+              play sound "entity.llama.spit" with volume 2 to loop-entity
+              if loop-entity is not {_me.%player%}:
+                damage loop-entity by {power.%player%}/2+{힘스텟.%player%}/6+{집중스텟.%player%}/16 hearts
+      loop 5 times:
+        wait 1 second
+        subtract 1 from {쿨타임::직업무기::1차::암살자.%player%}
+      send "&f&l[&c&l직업무기&f&l] 암살자&7&l-우클릭&f&l의 쿨타임이 완료되었습니다" to player
+      stop
+    else:
+      send "&f&l[&c&l직업무기&f&l] 암살자&7&l-우클릭&f&l | 쿨타임: %{쿨타임::직업무기::1차::암살자.%player%}%초" to player
+  if player's tool is wooden sword:
+    if {쿨타임::직업무기::1차::검사.%player%} is 0:
+      set {쿨타임::직업무기::1차::검사.%player%} to 7
+      set {검사::우클릭.%player%} to true
+      send "&f&l[&c&l직업무기&f&l] 검사&7&l-우클릭: &b&l활성화" to player
+      stop
+    else:
+      if {검사::우클릭.%player%} is true:
+        send "&f&l[&c&l직업무기&f&l] 검사&7&l-우클릭&f&l이 이미 활성화 되어있는 상태입니다."
+      else:
+        send "&f&l[&c&l직업무기&f&l] 검사&7&l-우클릭 &f&l| 쿨타임: %{쿨타임::직업무기::1차::검사.%player%}%초" to player
+  #궁수 우클
+  if player's tool is bow:
+    cancel event
+    if {쿨타임::직업무기::1차::궁수.%player%} is 0:
+      set {쿨타임::직업무기::1차::궁수.%player%} to 15
+      loop 10 times:
+        wait 3 tick
+        shoot arrow
+      loop 15 times:
+        wait 1 second
+        subtract 1 from {쿨타임::직업무기::1차::궁수.%player%}
+      send "&f&l[&c&l직업무기&f&l] 궁수&7&l-우클릭&f&l의 쿨타임이 완료되었습니다." to player
+    else:
+      send "&f&l[&c&l직업무기&f&l] 궁수&7&l-우클릭 &f&l| 쿨타임: %{쿨타임::직업무기::1차::궁수.%player%}%초" to player
+
+#마법사 평타
+on leftclick:
+  if player's tool is wooden shovel:
+    if player is not sneaking:
+      if {쿨타임::직업무기::0차::마법사.%player%} is 0:
+        set {쿨타임::직업무기::0차::마법사.%player%} to 1
+        set {_loc.%player%} to 0
+        set {_마법사::0차::공격면역::%player%} to true
+        set {마법사::0차::데미지::%player%} to {power.%player%}+{힘스텟.%player%}/5
+        loop 35 times:
+          add 0.2 to {_loc.%player%}
+          show 30 crit with offset of 0.1, 0.1, 0.1 speed 0.003 on the location {_loc.%player%} meter in front of and 1 meter above the player
+          set {_loca.%player%} to the location {_loc.%player%} meter in front of and 1 meter below the player
+          loop all entities:
+            if distance between {_loca.%player%} and loop-entity is smaller than 2:
+              if {_마법사::0차::공격면역::%loop-entity%} is not true:
+                damage loop-entity by {마법사::0차::데미지::%player%} / 2 hearts
+                set {_마법사::0차::공격면역::%loop-entity%} to true
+              set {_pl.%player%} to loop-entity
+              play sound "block.note_block.bell" with volume 1 to {_pl.%player%}
+        wait 1 second
+        subtract 1 from {쿨타임::직업무기::0차::마법사.%player%}
+      else:
+        send "&f&l[&c&l직업무기&f&l] 마법사 &7&l-좌클릭 &f&l| 쿨타임 %{쿨타임::직업무기::0차::마법사.%player%}%초" to player
+#마법사 쉬좌
+on leftclick:
+  if player's tool is wooden shovel:
+    if player is sneaking:
+      if 1st line of lore of player's tool contains "-2차":
+        if {쿨타임::직업무기::2차::마법사.%player%} is 0:
+          set {쿨타임::직업무기::2차::마법사.%player%} to 30
+          set {_loc.%player%} to 10
+          set {_me.%player%} to player
+          set {_location.%player%} to player's location
+          loop 10 times:
+            show 15 lava with offset of 0.1, 0.1, 0.1 speed 0.003 on the location {_loc.%player%} meter above {_location.%player%}
+            subtract 1 from {_loc.%player%}
+            set {_loca.%player%} to the location {_loc.%player%} meters above {_location.%player%}
+            loop all entities:
+              if distance between {_loca.%player%} and loop-entity is smaller than 20:
+                play sound "entity.lightning_bolt.impact" at volume 3 to loop-entity
+            wait 1 tick
+          show 200 explosion with speed 1 at {_location.%player%}
+          wait 10 ticks
+          show 200 explosion with speed 1 at {_location.%player%}
+          loop 25 times:
+            show 10 lava with offset of 0.3, 0.3, 0.3 speed 0.003 on the location {_loc.%player%} meter in front of {_location.%player%}
+            add 1 to {_loc.%player%}
+            set {_loca.%player%} to the location {_loc.%player%} meters in front of {_location.%player%}
+            loop all entities:
+              if distance between {_loca.%player%} and loop-entity <= 2:
+                play sound "entity.lightning_bolt.impact" at volume 3 to loop-entity
+                if loop-entity is not {_me.%player%}:
+                  damage loop-entity by {힘스텟.%player%}/5*2 + {power.%player%}/5*6 hearts
+            wait 1 tick
+          loop 30 times:
+            wait 1 second
+            subtract 1 from {쿨타임::직업무기::2차::마법사.%player%}
+          send "&f&l[&c&l직업무기&f&l] 마법사&7&l-쉬프트 좌클릭&f&l의 쿨타임이 완료되었습니다." to player
+        else:
+          send "&f&l[&c&l직업무기&f&l] 마법사&7&l-쉬프트 좌클릭&f&l | 쿨타임 %{쿨타임::직업무기::2차::마법사.%player%}%초" to player
+  #궁수 평타
+  if player's tool is bow:
+    if {쿨타임::직업무기::0차::궁수.%player%} is 0:
+      set {쿨타임::직업무기::0차::궁수.%player%} to 1
+      shoot arrow
+      wait 1 second
+      subtract 1 from {쿨타임::직업무기::0차::궁수.%player%}
+
+#파이터 우클
+on rightclick:
+  if player's tool is wooden pickaxe:
+    if {쿨타임::직업무기::1차::파이터.%player%} is 0:
+      set {_block} to clicked block's location
+      if {_block} is set:
+        set {_me} to player
+        loop all entities:
+          if distance between loop-entity and {_block} is smaller than 10:
+            set {쿨타임::직업무기::1차::파이터.%player%} to 10
+            set {_pl} to loop-entity
+            play sound "entity.lightning_bolt.thunder" with volume 3 to {_pl}
+            if loop-entity is not {_me}:
+              push loop-entity 3 meters horizontal backwards at speed 1
+              push loop-entity 3 meters upwards at speed 3
+              show 10 large explosion on the location 1 meter above player
+            loop 10 times:
+              wait 1 second
+              subtract 1 from {쿨타임::직업무기::1차::파이터.%player%}
+            send "&f&l[&c&l직업무기&f&l] 파이터&7&l-우클릭&f&l의 쿨타임이 완료되었습니다." to player
+      stop
+    else:
+      send "&f&l[&c&l직업무기&f&l] 파이터 &7&l-우클릭 &f&l| 쿨타임 %{쿨타임::직업무기::1차::파이터.%player%}%초" to player
+
+on damage of entity:
+  #검사 우클
+  if attacker's tool is wooden sword:
+    if {검사::우클릭.%attacker%} is true:
+      add damage * 2 to damage
+      play sound "block.note_block.bell" with volume 3 to attacker and victim
+      set {검사::우클릭.%attacker%} to false
+      send "&f&l[&c&l직업무기&f&l] 검사&7&l-우클릭: &b&l비활성화" to attacker
+      loop 7 times:
+        wait 1 second
+        subtract 1 from {쿨타임::직업무기::1차::검사.%attacker%}
+      send "&f&l[&c&l직업무기&f&l] 검사&7&l-우클릭&f&l의 쿨타임이 완료되었습니다" to attacker
+      stop
+
+
+on item damage:
+  cancel event
