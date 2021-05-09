@@ -81,7 +81,6 @@ command /convtoxp [<number>]:
       subtract arg 1 from {돈::%player%}
       set {_price::%player%} to arg 1 * 0.05
       add {_price::%player%} to xp of player
-      message "test" to player
     else:
       message "&c%arg 1 - {돈::%player%}%원만큼의 돈이 부족합니다!" to player
 command /돈확인:
