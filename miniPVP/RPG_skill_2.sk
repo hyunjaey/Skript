@@ -1,0 +1,231 @@
+variables:
+  {쿨타임::직업무기::2차::고블린.%player%} = 0
+  {쿨타임::직업무기::2차::나이트.%player%} = 0
+  {취직::%player%} = false
+  {레드팀::%player%} = false
+  {블루팀::%player%} = false
+  {레드팀생명} = 10
+  {블루팀생명} = 10
+  {게임시작} = false
+  {레드팀심장} = false
+  {블루팀심장} = false
+
+on leftclick:
+  if player's tool is iron hoe:
+    if player is sneaking:
+      if {쿨타임::직업무기::2차::고블린.%player%} is 0:
+        set {쿨타임::직업무기::2차::고블린.%player%} to 30
+        apply swiftness of tier 3 without particles to the player for 4 seconds
+        loop 80 times:
+          show 1 large explosion with offset of 1, 1, 1 speed 0.01 on the location 1 meter behind the player
+          set {_loca.%player%} to the location 1 meter behind the player
+          set {_me.%player%} to player
+          loop all entities:
+            if the distance between {_loca.%player%} and loop-entity is smaller than 3:
+              if loop-entity is not {_me.%player%}:
+                damage loop-entity by 2 hearts
+              play sound "entity.lightning_bolt.impact" with volume 2 to loop-entity
+          wait 1 tick
+        push player 1 meter above with velocity 1.5
+        wait 10 ticks
+        loop 100 times:
+          if the block 1 meter below the player is not air:
+            loop all entities:
+              if distance between the block 1 meter below player and loop-entity is smaller than 8:
+                if loop-entity is not {_me.%player%}:
+                  damage loop-entity by 6 hearts
+                play sound "entity.lightning_bolt.impact" with volume 2 to loop-entity
+            show 10 large explosion at the player
+            stop loop
+          else:
+            wait 1 ticks
+        heal player by 4 hearts
+        loop 30 times:
+          wait 1 second
+          subtract 1 from {쿨타임::직업무기::2차::고블린.%player%}
+        send "&f&l[&c&l직업무기&f&l] 고블린&7&l-쉬프트 좌클릭&f&l의 쿨타임이 완료되었습니다." to player
+        stop
+      else:
+        send "&f&l[&c&l직업무기&f&l] 고블린&7&l-쉬프트 좌클릭 &f&l| 쿨타임: %{쿨타임::직업무기::2차::고블린.%player%}%초" to player
+command /초기화:
+  trigger:
+    set {레드팀생명} to 0
+    set {블루팀생명} to 0
+    set {게임시작} to false
+    set {레드심장} to location at 375, 69, -174
+    set block at {레드심장} to redstone block
+    set {블루심장} to location at 371, 72, -228
+    set block at {블루심장} to lapis block
+    set {게임시작} to false
+command /선택:
+  trigger:
+    set {선택창} to a new chest inventory with 5 row with name "직업 선택창"
+    set slot 9 of {선택창} to iron sword named "&f&l[&c&l직업&f&l] 나이트"
+    set slot 11 of {선택창} to iron pickaxe named "&f&l[&c&l직업&f&l] 오크"
+    set slot 13 of {선택창} to iron hoe named "&f&l[&c&l직업&f&l] 고블린"
+    set slot 15 of {선택창} to bow named "&f&l[&c&l직업&f&l] 엘프"
+    set slot 17 of {선택창} to iron shovel named "&f&l[&c&l직업&f&l] 마법사"
+    set slot 22 of {선택창} to barrier named "&f&l[&c&l직업 초기화&f&l]"
+    set slot 39 of {선택창} to red wool named "&f레드팀 참가"
+    set slot 41 of {선택창} to blue wool named "&f블루팀 참가"
+    set slot 40 of {선택창} to gold block named "&f게임 시작"
+    open {선택창} to player
+
+on rightclick on gold block:
+  set event-block to yellow stained glass
+  apply regeneration 1 to player for 60 seconds
+  wait 100 seconds
+  set event-block to gold block
+
+on rightclick on diamond block:
+  set event-block to blue stained glass
+  apply swiftness 1 to player for 90 seconds
+  wait 60 seconds
+  set event-block to diamond block
+
+on break of redstone block:
+  cancel event
+  if player's tool is wooden pickaxe:
+    broadcast "레드팀의 심장이 파괴되어 레드팀은 이제부터 죽을시에 생명을 잃습니다."
+    set event-block to red stained glass
+    set {레드팀심장} to false
+  else:
+    message "심장 파괴용 곡괭이를 이용해주세요."
+
+on break of pink terracotta or red terracotta or white concrete or glass or ladder or blue terracotta or light blue terracotta or red stained glass or blue stained glass or emerald block:
+  cancel event
+
+on break of lapis block:
+  cancel event
+  if player's tool is wooden pickaxe:
+    broadcast "블루팀의 심장이 파괴되어 이제부터 블루팀은 죽을시에 생명을 잃습니다."
+    set event-block to blue stained glass
+    set {블루팀심장} to false
+  else:
+    message "심장 파괴용 곡괭이를 이용해주세요."
+
+on rightclick:
+  if player's tool is dried kelp:
+    if player's health is player's max health:
+      send "&c이미 최대 체력입니다" to player
+    else:
+      remove 1 of player's tool from player's tool
+      heal player by 6 hearts
+      play sound "block.note_block.bell" with volume 1 to player
+
+on death:
+  drop 1 dried kelp named "&f생명의 물약"
+  if {레드팀::%victim%} is true:
+    if {레드팀심장} is false:
+      subtract 1 from {레드팀생명}
+      broadcast "%player%님이 사망하여 레드팀의 생명이 깎였습니다."
+      broadcast "레드팀의 잔여 생명은 %{레드팀생명}% 개입니다."
+      if {레드팀생명} <= 0:
+        broadcast "레드팀의 생명이 0이 되어 블루팀의 승리로 게임을 종료합니다."
+        set {레드심장} to location at 375, 69, -174
+        set block at {레드심장} to redstone block
+        set {블루심장} to location at 371, 72, -228
+        set block at {블루심장} to lapis block
+        set {게임시작} to false
+
+  else if {블루팀::%victim%} is true:
+    if {블루팀심장} is false:
+      subtract 1 from {블루팀생명}
+      broadcast "%player%님이 사망하여 블루팀의 생명이 깎였습니다."
+      broadcast "블루팀의 잔여 생명은 %{블루팀생명}% 개입니다."
+      if {블루팀생명} <= 0:
+        broadcast "블루팀의 생명이 0이 되어 레드팀의 승리로 게임을 종료합니다."
+        set {레드심장} to location at 375, 69, -174
+        set block at {레드심장} to redstone block
+        set {블루심장} to location at 371, 72, -228
+        set block at {블루심장} to lapis block
+        set {게임시작} to false
+
+
+
+on inventory click:
+  if iname is "직업 선택창":
+    cancel event
+    if {게임시작} is false:
+      if {취직::%player%} is false:
+        if event-item is iron hoe:
+          give 1 iron hoe named "&f&l[&c&l직업무기&f&l] 고블린" to player
+          give 1 chain chestplate named "&f고블린의 갑주" to player
+          give 1 dried kelp named "&f생명의 물약" to player
+          give 1 wooden pickaxe of efficiency 1 named "&f심장 파괴용 도구" to player
+          set player's max health to 12
+          set player's health to player's max health
+          set {취직::%player%} to true
+          play sound "block.note_block.bell" with volume 1 to player
+        if event-item is iron sword:
+          give 1 iron sword named "&f&l[&c&l직업무기&f&l] 나이트" to player
+          give 1 gold chestplate named "&f나이트의 갑주" to player
+          give 1 dried kelp named "&f생명의 물약" to player
+          give 1 wooden pickaxe of efficiency 1 named "&f심장 파괴용 도구" to player
+          set player's max health to 14
+          set player's health to player's max health
+          set {취직::%player%} to true
+          play sound "block.note_block.bell" with volume 1 to player
+        if event-item is iron pickaxe:
+          give 1 iron pickaxe named "&f&l[&c&l직업무기&f&l] 오크" to player
+          give 1 iron chestplate named "&f오크의 갑주" to player
+          give 1 iron leggings named "&f오크의 바지" to player
+          give 1 dried kelp named "&f생명의 물약" to player
+          give 1 wooden pickaxe of efficiency 1 named "&f심장 파괴용 도구" to player
+          set player's max health to 20
+          set player's health to player's max health
+          set {취직::%player%} to true
+          play sound "block.note_block.bell" with volume 1 to player
+        if event-item is iron shovel:
+          give 1 iron shovel named "&f&l[&c&l직업무기&f&l] 마법사" to player
+          give 1 leather chestplate named "&f마법사의 조끼" to player
+          give 1 leather leggings named "&f마법사의 바지" to player
+          give 1 gold boots named "&f마법사의 장화" to player
+          give 1 dried kelp named "&f생명의 물약" to player
+          give 1 wooden pickaxe of efficiency 1 named "&f심장 파괴용 도구" to player
+          set player's max health to 10
+          set player's health to player's max health
+          set {취직::%player%} to true
+          play sound "block.note_block.bell" with volume 1 to player
+        if event-item is bow:
+          give 1 bow named "&f&l[&c&l직업무기&f&l] 엘프" to player
+          give 1 leather helmet named "&f엘프의 모자" to player
+          give 1 leather boots named "&f엘프의 장화" to player
+          give 1 dried kelp named "&f생명의 물약" to player
+          give 1 wooden pickaxe of efficiency 1 named "&f심장 파괴용 도구" to player
+          set player's max health to 8
+          set player's health to player's max health
+          set {취직::%player%} to true
+          play sound "block.note_block.bell" with volume 1 to player
+      if event-item is barrier:
+        set {취직::%player%} to false
+        clear player's inventory
+        play sound "block.note_block.bell" with volume 1 to player
+      if event-item is red wool:
+        set {레드팀::%player%} to true
+        set {블루팀::%player%} to false
+        broadcast "&c%player%님이 레드팀에 참가하였습니다!"
+      if event-item is blue wool:
+        set {레드팀::%player%} to false
+        set {블루팀::%player%} to true
+        broadcast "&8%player%님이 블루팀에 참가하였습니다!"
+      if event-item is gold block:
+        if {게임시작} is false:
+          set {게임시작} to true
+          broadcast "게임시작!"
+          set {레드팀생명} to 10
+          set {블루팀생명} to 10
+          set {레드팀심장} to true
+          set {블루팀심장} to true
+          loop all entities:
+            if {레드팀::%loop-entity%} is true:
+              teleport loop-entity to {레드팀기지}
+            if {블루팀::%loop-entity%} is true:
+              teleport loop-entity to {블루팀기지}
+    else:
+      send "아직 게임이 진행중입니다" to player
+on respawn:
+  if {레드팀::%player%} is true:
+    teleport player to {레드팀기지}
+  else if {블루팀::%player%} is true:
+    teleport player to {블루팀기지}

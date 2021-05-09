@@ -1,0 +1,66 @@
+variables:
+  {쿨타임::직업무기::2차::나이트.%player%} = 0
+  {쿨타임::직업무기::2차::오크.%player%} = 0
+
+on leftclick:
+  if player's tool is iron sword:
+    if player is sneaking:
+      if {쿨타임::직업무기::2차::나이트.%player%} is 0:
+        set {쿨타임::직업무기::2차::나이트.%player%} to 30
+        set {_loca.%player%} to player's location
+        set {_loc.%player%} to 0
+        loop 10 times:
+          show 30 explosion with offset of 0.1, 0.2, 0.1 speed 0.005 at the location 1.5 meter above and {_loc.%player%} meters in front of {_loca.%player%}
+          set {_location.%player%} to the location 1.5 meter above and {_loc.%player%} meters in front of {_loca.%player%}
+          loop all entities:
+            if the distance between loop-entity's location and {_location.%player%} is less than 2:
+              play sound "entity.llama_spit" at volume 2 to loop-entity
+              if loop-entity is not player:
+                set {_location.%player%} to loop-entity's location
+                loop 40 times:
+                  teleport loop-entity to {_location.%player%}
+                  wait 1 tick
+                  damage loop-entity by 2 hearts
+                  show 30 large smoke with offset of 0.1, 0.1, 5 speed 0.003 at loop-entity
+                exit loop
+          add 1 to {_loc.%player%}
+        loop 30 times:
+          wait 1 second
+          subtract 1 from {쿨타임::직업무기::2차::나이트.%player%}
+        send "&f&l[&c&l직업무기&f&l] 나이트&7&l-쉬프트 좌클릭&f&l의 쿨타임이 완료되었습니다." to player
+      else:
+        send "&f&l[&c&l직업무기&f&l] 나이트&7&l-쉬프트 좌클릭&f&l | 쿨타임 %{쿨타임::직업무기::2차::나이트.%player%}%초" to player
+
+on leftclick:
+  if player is sneaking:
+    if player's tool is iron pickaxe:
+      if {쿨타임::직업무기::2차::오크.%player%} is 0:
+        set {쿨타임::직업무기::2차::오크.%player%} to 20
+        push the player forwards at speed 2.4
+        set {_me::%player%} to the player
+        loop 30 times:
+          show 20 large smoke with offset of 0.1, 0.1, 2 speed 0.003 at player
+          loop all entities:
+            if loop-entity is not {_me::%player%}:
+              if distance between loop-entity and player is smaller than 2:
+                teleport loop-entity to {_me::%player%}
+                damage loop-entity by 2 hearts
+          wait 1 tick
+        loop 20 times:
+          wait 1 second
+          subtract 1 from {쿨타임::직업무기::2차::오크.%player%}
+        send "&f&l[&c&l직업무기&f&l] 오크&7&l-쉬프트 좌클릭&f&l의 쿨타임이 완료되었습니다." to player
+      else:
+        send "&f&l[&c&l직업무기&f&l] 오크&7&l-쉬프트 좌클릭&f&l | 쿨타임 %{쿨타임::직업무기::2차::오크.%player%}%초" to player
+
+on damage:
+  if attacker's tool is iron hoe:
+    set damage to 2
+  else if attacker's tool is iron shovel:
+    set damage to 0
+  else if attacker's tool is bow:
+    set damage to 2.5
+  else if attacker's tool is iron pickaxe:
+    set damage to 1
+  else if attacker's tool is iron sword:
+    set damage to 1.5
