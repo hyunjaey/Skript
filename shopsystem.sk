@@ -59,7 +59,8 @@ variables:
   {판매가격::흰동가리} = 200
   {구매가격::흰동가리} = 220
   {돈::%player%} = 0
-every 1 minutes:
+  {경매} = false
+every 20 minutes:
   add 10 to {재고::밀}
   add 10 to {재고::호박}
   add 10 to {재고::감자}
@@ -75,6 +76,55 @@ every 1 minutes:
   add 10 to {재고::복어}
   add 10 to {재고::흰동가리}
   execute command "/변동"
+
+#경매
+command /auctadd [<integer>]:
+  trigger:
+    execute player command "/경매추가 %arg 1%"
+
+command /경매추가 [<integer>]:
+  trigger:
+    if {경매} is true:
+      if {돈::%player%} >= arg 1:
+        if arg 1 > {경매최대금액}:
+          set {경매최대금액} to arg 1
+          broadcast "<orange>누군가가 %arg 1%원을 제시했습니다!"
+          set {낙찰인} to player
+        else:
+          message "&c현재 최고 입찰가보다 같거나 적은 금액을 제시하셨습니다" to player
+      else:
+        message "&c%arg 1 - {돈::%player%}%원만큼의 돈이 부족합니다!" to player
+    else:
+      message "시작된 경매가 없습니다" to player
+
+command /경매시작:
+  trigger:
+    if player is op:
+      if {경매} is false:
+        set {경매} to true
+        set {경매최대금액} to 0
+        set {낙찰인} to ""
+        broadcast "<orange>경매가 시작되었습니다!"
+      else:
+        message "경매 진행중" to player
+    else:
+      message "관리자 권한이 있는 사람만이 사용 가능한 명령어 입니다" to player
+
+command /경매종료:
+  trigger:
+    if player is op:
+      if {경매} is true:
+        set {경매} to false
+        subtract {경매최대금액} from {돈::%{낙찰인}%}
+        message "낙찰 된 사람은 %{낙찰인}% 입니다" to player
+        broadcast "경매가 종료되었습니다. 최종 낙찰가는 &c%{경매최대금액}%&f원 입니다"
+      else:
+        message "시작된 경매가 없습니다" to player
+    else:
+      message "관리자 권한이 있는 사람만이 사용 가능한 명령어 입니다" to player
+
+
+
 command /convtoxp [<number>]:
   trigger:
     if {돈::%player%} >= arg 1:
